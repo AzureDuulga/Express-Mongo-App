@@ -74,4 +74,26 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getAllUsers, getUser, updateUser, deleteUser };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.find({ email, password });
+    if (!user.length) {
+      res.status(400).json({
+        message: `${email} ийм имэйлтэй хэрэглэгч бүртгэлтгүй байна.`,
+      });
+    }
+    res.status(200).json({ message: "Амжилттай нэвтэрлээ", user });
+  } catch (error) {
+    res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
+  }
+};
+
+module.exports = {
+  createUser,
+  getAllUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  login,
+};
