@@ -1,7 +1,8 @@
 const Travel = require("../Model/Travel");
 const getAllTravels = async (req, res) => {
   try {
-    const travels = await Travel.find({});
+    const travels = await Travel.find({}).populate("category");
+    console.log(travels);
     res.status(201).json({ message: "Бүх аялалын мэдээлэл", travels });
   } catch (error) {
     res.status(400).json({
@@ -11,19 +12,20 @@ const getAllTravels = async (req, res) => {
   }
 };
 const createTravel = async (req, res) => {
-  const { name, description, location, price, day } = req.body;
-  if (!name || !description || !location || !price || !day) {
+  const { title, description, location, price, day, category } = req.body;
+  if (!title || !description || !location || !price || !day || !category) {
     res
       .status(400)
       .json({ message: "Нэр,тайлбар, байршил,  үнэ, өдөр хоосон байна." });
   }
   try {
     const travels = await Travel.create({
-      name,
+      title,
       description,
       location,
       price,
       day,
+      category,
     });
     res.status(201).json({ message: "Амжилттай бүртгэгдлээ", travels });
   } catch (error) {

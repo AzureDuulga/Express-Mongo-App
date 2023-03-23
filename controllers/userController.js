@@ -1,4 +1,7 @@
 const User = require("../Model/User");
+const bcrypt = require("bcrypt");
+var jwt = require("jsonwebtoken");
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -74,18 +77,59 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
+const login = async (req, res, next) => {
   try {
-    const user = await User.find({ email, password });
-    if (!user.length) {
+    const user = await User.findOne({ email: req.body.email }).select(
+      "+password"
+    );
+    if (!user) {
       res.status(400).json({
-        message: `${email} ийм имэйлтэй хэрэглэгч бүртгэлтгүй байна.`,
+        message: `Имэйл эсвэл нууц үг буруу байна`,
       });
     }
-    res.status(200).json({ message: "Амжилттай нэвтэрлээ", user });
+
+    const checkpass = bcrypt.compareSync(req.body.password, user.password);
+    if (!checkpass) {
+      res.status(400).json({
+        message: `Имэйл эсвэл нууц үг буруу байна`,
+      });
+    }
+
+    const { password, _id, name, email, role } = user;
+
+    const token = jwt.sign(
+      { _id, name, email, role },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    res.status(200).json({ message: "Амжилттай нэвтэрлээ", user, token });
   } catch (error) {
-    res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
+    // res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
+    next(error);
+  }
+};
+const register = async (req, res, next) => {
+  const { name, email, password, phone } = req.body;
+  try {
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+    });
+    if (!name || !email || !password || !phone) {
+      res
+        .status(400)
+        .json({ message: "Нэр,email, нууц үг, дугаар хоосон байна." });
+    }
+    res.status(200).json({ message: "Амжилттай бүртгүүллээ.", user });
+  } catch (error) {
+    // res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
+    next(error);
   }
 };
 
@@ -96,4 +140,5 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  register,
 };

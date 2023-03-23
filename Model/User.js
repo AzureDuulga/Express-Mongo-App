@@ -15,12 +15,13 @@ const UserSchema = new mongoose.Schema({
     enum: ["User", "Admin"],
     default: "User",
   },
-  password: String,
+  password: { type: String, select: false },
   phone: Number,
   createdAt: {
     type: Date,
     default: Date.now(),
   },
+  phone: Number,
 });
 
 const user = mongoose.model("User", UserSchema);
