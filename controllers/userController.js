@@ -7,10 +7,7 @@ const getAllUsers = async (req, res) => {
     const users = await User.find({});
     res.status(201).json({ message: "Бүх хэрэглэгчийн мэдээлэл", users });
   } catch (error) {
-    res.status(400).json({
-      message: "Хэрэглэгчийн мэдээлэл авхад алдаа гарлаа.",
-      error: error,
-    });
+    res.status(400).json({ message: "Бүртгэл амжилгүй боллоо.", error: error });
   }
 };
 const createUser = async (req, res) => {
@@ -41,7 +38,10 @@ const getUser = async (req, res) => {
       .status(201)
       .json({ message: `Ийм ${id} ID-тай хэрэглэгч амжилттай олдлоо`, user });
   } catch (error) {
-    res.status(400).json({ message: "Бүртгэл амжилгүй боллоо.", error: error });
+    res.status(400).json({
+      message: "ID хэрэглэгчийн мэдээлэл авах хүсэлт амжилгүй боллоо.",
+      error: error,
+    });
   }
 };
 const updateUser = async (req, res) => {
@@ -104,10 +104,10 @@ const login = async (req, res, next) => {
         expiresIn: "1h",
       }
     );
+    console.log("token=====>", token);
 
     res.status(200).json({ message: "Амжилттай нэвтэрлээ", user, token });
   } catch (error) {
-    // res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
     next(error);
   }
 };
@@ -128,7 +128,6 @@ const register = async (req, res, next) => {
     }
     res.status(200).json({ message: "Амжилттай бүртгүүллээ.", user });
   } catch (error) {
-    // res.status(400).json({ message: "Хүсэлт амжилгүй боллоо.", error: error });
     next(error);
   }
 };

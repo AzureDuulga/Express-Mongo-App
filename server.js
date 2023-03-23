@@ -8,6 +8,7 @@ const userRoutes = require("./Routes/userRoutes");
 const categoryRoutes = require("./Routes/categoryRoutes");
 const travelRoutes = require("./Routes/travelRoutes");
 const upload = require("./middlewares/upload");
+const error = require("./middlewares/error");
 
 dotenv.config();
 
@@ -40,6 +41,8 @@ app.post("/uploads", upload.single("image"), async (req, res) => {
     console.error(error);
   }
 });
+
+app.use(error);
 
 connectDB(dburl);
 app.listen(PORT, () => {
