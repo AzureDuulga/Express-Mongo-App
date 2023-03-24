@@ -78,6 +78,7 @@ const deleteUser = async (req, res) => {
 };
 
 const login = async (req, res, next) => {
+  console.log("REQ===>", req.body);
   try {
     const user = await User.findOne({ email: req.body.email }).select(
       "+password"
@@ -89,6 +90,7 @@ const login = async (req, res, next) => {
     }
 
     const checkpass = bcrypt.compareSync(req.body.password, user.password);
+
     if (!checkpass) {
       res.status(400).json({
         message: `Имэйл эсвэл нууц үг буруу байна`,
