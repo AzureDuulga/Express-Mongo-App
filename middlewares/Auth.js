@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const checkRole = (req, res, next) => {
+const checkLogin = (req, res, next) => {
   if (!req.headers.authorization) {
     res.status(400).json({ messase: "Token явуулагүй байна." });
   }
@@ -12,4 +12,4 @@ const checkRole = (req, res, next) => {
   next();
 };
 
-module.exports = checkRole;
+module.exports = checkLogin;
