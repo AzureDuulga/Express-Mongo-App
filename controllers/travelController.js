@@ -12,8 +12,17 @@ const getAllTravels = async (req, res) => {
   }
 };
 const createTravel = async (req, res) => {
-  const { title, description, location, price, day, category } = req.body;
-  if (!title || !description || !location || !price || !day || !category) {
+  const { title, description, location, price, day, category, travelImg } =
+    req.body;
+  if (
+    !title ||
+    !description ||
+    !location ||
+    !price ||
+    !day ||
+    !category ||
+    !travelImg
+  ) {
     res
       .status(400)
       .json({ message: "Нэр,тайлбар, байршил,  үнэ, өдөр хоосон байна." });
@@ -26,6 +35,7 @@ const createTravel = async (req, res) => {
       price,
       day,
       category,
+      travelImg,
     });
     res.status(201).json({ message: "Амжилттай бүртгэгдлээ", travels });
   } catch (error) {
@@ -70,7 +80,7 @@ const deleteTravel = async (req, res) => {
     res.status(400).json({ message: `Йим ${id} ID-тай аялал олдсонгүй` });
   }
   try {
-    const travels = await Travel.findOneAndDelete(id);
+    const travels = await Travel.findByIdAndDelete(id);
     res.status(201).json({
       message: `Ийм ${id} ID-тай аялалийг амжилттай устгалаа`,
       travels,
